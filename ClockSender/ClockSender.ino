@@ -3,12 +3,17 @@
   #include <Wire.h>
   #include "RTClib.h"
   #include <RCSwitch.h>
+  #include <RH_ASK.h>
+  #include <SPI.h>
   
   // object of RTClib library
   RTC_DS3231 rtc;
 
   // objject rcswitch library
   RCSwitch rcSwitch = RCSwitch(); 
+
+  // object from RH_ASK
+  RH_ASK driver
 
   //  2D character array to store days information
   char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -40,8 +45,8 @@ void setup() {
     // rtc.adjust(DateTime(2017, 1, 27, 12, 56, 0));
   }
 
-  // Receiver is connected with digital pin 2 
-  rcSwitch.enableTransmit(3);
+  // Receiver is connected with digital pin 9 
+  rcSwitch.enableTransmit(9);
 
 
 }
@@ -73,7 +78,7 @@ void loop() {
     const char *msg = "hello world";
 
     //rcSwitch.send(9876,24);
-    //rcSwitch.send((long unsigned)msg,strlen(msg));
+    rcSwitch.send((long unsigned)msg,strlen(msg));
     delay(1000);
     
 }
