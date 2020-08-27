@@ -1,26 +1,24 @@
-#include <RCSwitch.h>
+#include <RH_ASK.h>
+#include <SPI.h> 
 
-RCSwitch rcSwitch = RCSwitch();
+RH_ASK rf_driver;
+
 
 void setup() {
   Serial.begin(9600); //Begin der seriellen Kommunikation mit 9600 baud.
-  // Empfängermodul ist am digitalen PIN 2 angeschlossen
-  // dies ist der Interrupt-Pin "0".
-  rcSwitch.enableReceive(0);
+  rf_driver.init(); // PIN D11
+  
 }
 void loop() {
-  //Serial.print("Program is starting");
-  if (rcSwitch.available()){ //Wenn Daten verfügbar sind.
-    //Ausgabe des aktuellen Zeitstempels (seitdem der Arduino gestartet wurde).
-    Serial.print("[");
-    Serial.print(millis());
-    Serial.print("] - ");
-    //Ausgabe des gelesenen Wertes
-    Serial.println( rcSwitch.getReceivedValue() );
-    char received_message = (char) rcSwitch.getReceivedValue();
-    Serial.println(received_message);
-    
-    //Zurücksetzen des Empfängers.
-    rcSwitch.resetAvailable();
+  
+  // Set buffer to size of expected message
+  uint8_t buf[24];
+  uint8_t buflen = sizeof(buf);
+  // Check if received packet is correct size
+  if (rf_driver.recv(buf, &buflen))
+  {   
+    // Message received with valid checksum
+    Serial.print("Message Received: ");
+    Serial.println((char*)buf);         
   }
 }

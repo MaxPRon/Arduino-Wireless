@@ -1,25 +1,18 @@
-  // Include the necessary libraries
+// Include the necessary libraries
   
   #include <Wire.h>
-  #include "RTClib.h"
-  #include <RCSwitch.h>
-  #include <RH_ASK.h>
+  #include "RTClib.h" // Clock library
+  #include <RH_ASK.h> // Sender library
   #include <SPI.h>
   
   // object of RTClib library
   RTC_DS3231 rtc;
-
-  // objject rcswitch library
-  RCSwitch rcSwitch = RCSwitch(); 
-
+  
   // object from RH_ASK
-  RH_ASK driver
+  RH_ASK rf_driver;
 
   //  2D character array to store days information
   char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-
-
-
 
 void setup() {
 
@@ -27,6 +20,7 @@ void setup() {
   Serial.begin(9600);
   delay(3000); // wait for console opening
 
+  //// Clock Section ////
   
   if (! rtc.begin()) { // rtc.begin:  function ensures that the RTC module is connected.
     Serial.println("Couldn't find RTC");
@@ -44,15 +38,21 @@ void setup() {
     // for example to set January 27 2017 at 12:56 you would call:
     // rtc.adjust(DateTime(2017, 1, 27, 12, 56, 0));
   }
+  
+  //// Sender Section ////
+  
+  // Initalize Transmission
+  // Standard Pin: D12 
+  rf_driver.init();
 
-  // Receiver is connected with digital pin 9 
-  rcSwitch.enableTransmit(9);
 
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+
+    //// Read and print time 
     DateTime now = rtc.now(); // function returns current date & time. Its return value is usually stored in the variable of datatype DateTime
 
     // All println are used to format accuaretly
@@ -71,14 +71,20 @@ void loop() {
     Serial.print(':');
     Serial.print(now.second(), DEC); // // function returns current second
     Serial.println();
-
-    Serial.println();
     
     Serial.println();
-    const char *msg = "hello world";
+    delay(1000);
+    
+    //// Prepare Sender and message
+    // RH_ASK library
+    // const char *msg = "Welcome to the Workshop!";
+    //const int *msg = [now.year();now.month();now.day();];
 
-    //rcSwitch.send(9876,24);
-    rcSwitch.send((long unsigned)msg,strlen(msg));
+
+    Serial.println(sizeof(msg));
+    //rf_driver.send((uint8_t *)msg, strlen(msg)); // string version
+    rf_driver.send((uint8_t *)msg, sizeof(msg));
+    rf_driver.waitPacketSent();
     delay(1000);
     
 }
