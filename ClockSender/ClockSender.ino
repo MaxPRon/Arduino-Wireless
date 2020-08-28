@@ -1,18 +1,28 @@
 // Include the necessary libraries
   
-  #include <Wire.h>
-  #include "RTClib.h" // Clock library
-  #include <RH_ASK.h> // Sender library
-  #include <SPI.h>
+#include <Wire.h>
+#include "RTClib.h" // Clock library
+#include <RH_ASK.h> // Sender library
+#include <SPI.h>
   
-  // object of RTClib library
-  RTC_DS3231 rtc;
+// object of RTClib library
+RTC_DS3231 rtc;
   
-  // object from RH_ASK
-  RH_ASK rf_driver;
+// object from RH_ASK
+RH_ASK rf_driver;
 
-  //  2D character array to store days information
-  char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+//  2D character array to store days information
+char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+// Variables for storeing time related information
+
+String str_year;
+String str_month;
+String str_day;
+String str_hour;
+String str_minute;
+String str_second;
+String str_out;
 
 void setup() {
 
@@ -76,14 +86,51 @@ void loop() {
     delay(1000);
     
     //// Prepare Sender and message
-    // RH_ASK library
-    // const char *msg = "Welcome to the Workshop!";
-    //const int *msg = [now.year();now.month();now.day();];
+    str_year = String(now.year());
+    str_month = String(now.month());
+    if(strlen(str_month.c_str()) < 2)
+    {
+      str_month = "0" + str_month;
+    }
+    str_day = String(now.day());
+    if(strlen(str_day.c_str()) < 2)
+    {
+      str_day = "0" + str_day;
+    }
+    
+    str_hour = String(now.hour());
+    if(strlen(str_hour.c_str()) < 2)
+    {
+      str_hour = "0" + str_hour;
+    }
+    str_minute = String(now.minute());
+    if(strlen(str_minute.c_str()) < 2)
+    {
+      str_minute = "0" + str_minute;
+    }
+    str_second = String(now.second());
+    if(strlen(str_second.c_str()) < 2)
+    {
+      str_second = "0" + str_second;
+    }
 
+    
+    // Put together in one string
+    str_out = str_year + str_month + str_day + str_hour + str_minute + str_second;
+    // Length: 13
+  
+    
+    // Create a char array
+    const char *msg = str_out.c_str();
 
-    Serial.println(sizeof(msg));
-    //rf_driver.send((uint8_t *)msg, strlen(msg)); // string version
-    rf_driver.send((uint8_t *)msg, sizeof(msg));
+    // Demo message 
+    // const char *msg = "Hello World!"; // length 12
+
+    Serial.print("Message that will be sent: ");
+    Serial.println(str_out);
+    Serial.print("Size of the message: ");
+    Serial.println(strlen(msg));
+    rf_driver.send((uint8_t *)msg, strlen(msg)); // string version
     rf_driver.waitPacketSent();
     delay(1000);
     

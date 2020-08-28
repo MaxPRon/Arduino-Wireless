@@ -11,3 +11,4 @@ References:
 
 https://draeger-it.blog/arduino-tutorial-433mhz-sender-empfaenger/
 https://lastminuteengineers.com/ds3231-rtc-arduino-tutorial/
+https://dronebotworkshop.com/433mhz-rf-modules-arduino/
