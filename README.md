@@ -10,6 +10,9 @@ Simple script to read the time from a Real time clock (RTC) DS3231 transmit it u
 - RTC DS3231 I2C: https://www.amazon.de/AZDelivery-Real-Clock-DS3231-Parent/dp/B07ZQGBH14
 
 
+## Schematic
+
+![Schematic](/Pictures/Schematic_m.png)
 
 ## References:
 
